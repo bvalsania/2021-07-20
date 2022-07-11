@@ -104,7 +104,7 @@ public class User {
 
 	@Override
 	public String toString() {
-		return String.format("%s (%s)",  name, userId);
+		return String.format("%s (%s) \n",  name, userId);
 	}
 	
 }

@@ -5,9 +5,12 @@
 package it.polito.tdp.yelp;
 
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 
+import it.polito.tdp.yelp.model.Adiacenza;
 import it.polito.tdp.yelp.model.Model;
+import it.polito.tdp.yelp.model.User;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -38,13 +41,13 @@ public class FXMLController {
     private TextField txtX2; // Value injected by FXMLLoader
 
     @FXML // fx:id="cmbAnno"
-    private ComboBox<?> cmbAnno; // Value injected by FXMLLoader
+    private ComboBox<Integer> cmbAnno; // Value injected by FXMLLoader
 
     @FXML // fx:id="txtN"
     private TextField txtN; // Value injected by FXMLLoader
 
     @FXML // fx:id="cmbUtente"
-    private ComboBox<?> cmbUtente; // Value injected by FXMLLoader
+    private ComboBox<User> cmbUtente; // Value injected by FXMLLoader
 
     @FXML // fx:id="txtX1"
     private TextField txtX1; // Value injected by FXMLLoader
@@ -54,16 +57,62 @@ public class FXMLController {
 
     @FXML
     void doCreaGrafo(ActionEvent event) {
-
+    	
+    	txtResult.clear();
+    	
+    	try {
+    		int n = Integer.parseInt(this.txtN.getText());
+    		int anno = this.cmbAnno.getValue();
+    		String msg = this.model.creag(n,anno);
+    		txtResult.appendText(msg);
+    		
+    	}catch(NumberFormatException e) {
+    		txtResult.appendText("Errore inserire un numero di recensioni corretto");
+    	}
+    	
+    	
+    
+    	this.cmbUtente.getItems().clear();
+    	this.cmbUtente.getItems().addAll(this.model.getUtenti());
+    	
     }
 
     @FXML
     void doUtenteSimile(ActionEvent event) {
-
+    	
+    	txtResult.clear();
+    	
+    	User u = this.cmbUtente.getValue();
+    	
+    	if(u == null) {
+    		txtResult.appendText("errore, devi inserire un utente");
+    	}
+    	
+    	txtResult.appendText("Utenti più simili a "+u+": \n");
+    	List<Adiacenza> lista = this.model.utentiPiuSimili(u);
+    	txtResult.appendText(lista+" ");
+    	
     }
     
     @FXML
     void doSimula(ActionEvent event) {
+    	txtResult.clear();
+    	try {
+    		int x1 = Integer.parseInt(this.txtX1.getText());
+    		int x2 = Integer.parseInt(this.txtX2.getText());
+    		
+    		if(x2>this.model.getUtenti().size()) {
+    			txtResult.appendText("errore, inserire un numero corretto di utenti");
+    		}
+    		
+    		if(x1>x2) {
+    			txtResult.appendText("errore, inserire un valore minore");
+    		}
+    		
+    		
+    	}catch(NumberFormatException e) {
+    		txtResult.appendText("errore, inserire un valore corretto");
+    	}
 
     }
     
@@ -84,5 +133,9 @@ public class FXMLController {
     
     public void setModel(Model model) {
     	this.model = model;
+    	
+    	for(int i = 2005;i<=2013;i++) {
+    		this.cmbAnno.getItems().add(i);
+    	}
     }
 }
